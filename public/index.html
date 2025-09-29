@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <title>Simple Facebook Bot</title>
+
+    <style>
+
+        body { font-family: Arial; margin: 40px; }
+
+        .container { max-width: 600px; margin: 0 auto; }
+
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; }
+
+        textarea { width: 100%; height: 100px; margin: 10px 0; }
+
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; }
+
+        .status { padding: 10px; margin: 10px 0; }
+
+        .success { background: #d4edda; color: #155724; }
+
+        .error { background: #f8d7da; color: #721c24; }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>🤖 Simple Facebook Bot</h1>
+
+        
+
+        <div class="section">
+
+            <h3>1. AppState Setup</h3>
+
+            <textarea id="appstate" placeholder='Paste AppState JSON here: [{"name": "c_user", "value": "123", "domain": ".facebook.com"}]'></textarea>
+
+            <button onclick="saveAppState()">Save AppState</button>
+
+        </div>
+
+        <div class="section">
+
+            <h3>2. UIDs Setup</h3>
+
+            <textarea id="uids" placeholder="Enter UIDs (one per line)">100000000000001
+
+100000000000002
+
+100000000000003</textarea>
+
+            <button onclick="saveUIDs()">Save UIDs</button>
+
+        </div>
+
+        <div class="section">
+
+            <h3>3. Messages Setup</h3>
+
+            <textarea id="messages" placeholder="Enter messages (one per line)">Hello! 👋
+
+This is test message
+
+Goodbye! 😊</textarea>
+
+            <button onclick="saveMessages()">Save Messages</button>
+
+        </div>
+
+        <div class="section">
+
+            <h3>4. Check Status</h3>
+
+            <button onclick="checkFiles()">Check Files</button>
+
+            <button onclick="checkHealth()">Check Health</button>
+
+            <div id="status"></div>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        async function saveAppState() {
+
+            const appstate = document.getElementById('appstate').value;
+
+            const response = await fetch('/api/save-appstate', {
+
+                method: 'POST',
+
+                headers: { 'Content-Type': 'application/json' },
+
+                body: JSON.stringify({ appstate: JSON.parse(appstate) })
+
+            });
+
+            showResult(await response.json());
+
+        }
+
+        async function saveUIDs() {
+
+            const uids = document.getElementById('uids').value;
+
+            const response = await fetch('/api/save-uids', {
+
+                method: 'POST',
+
+                headers: { 'Content-Type': 'application/json' },
+
+                body: JSON.stringify({ uids })
+
+            });
+
+            showResult(await response.json());
+
+        }
+
+        async function saveMessages() {
+
+            const messages = document.getElementById('messages').value;
+
+            const response = await fetch('/api/save-messages', {
+
+                method: 'POST',
+
+                headers: { 'Content-Type': 'application/json' },
+
+                body: JSON.stringify({ messages })
+
+            });
+
+            showResult(await response.json());
+
+        }
+
+        async function checkFiles() {
+
+            const response = await fetch('/api/check-files');
+
+            const data = await response.json();
+
+            showResult(data);
+
+        }
+
+        async function checkHealth() {
+
+            const response = await fetch('/health');
+
+            const data = await response.json();
+
+            showResult(data);
+
+        }
+
+        function showResult(data) {
+
+            const statusDiv = document.getElementById('status');
+
+            statusDiv.className = data.success ? 'status success' : 'status error';
+
+            statusDiv.innerHTML = JSON.stringify(data, null, 2);
+
+        }
+
+    </script>
+
+</body>
+
+</html>
